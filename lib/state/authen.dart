@@ -10,6 +10,7 @@ class Authen extends StatefulWidget {
 
 class _AuthenState extends State<Authen> {
   double screen;
+  bool status = true;
   @override
   Widget build(BuildContext context) {
     screen = MediaQuery.of(context).size.width;
@@ -28,23 +29,22 @@ class _AuthenState extends State<Authen> {
     );
   }
 
-
-Container buildLogin() {
+  Container buildLogin() {
     return Container(
       margin: EdgeInsets.only(top: 16),
       width: screen * 0.6,
       child: RaisedButton(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         color: MyStyle().darkColor,
-         onPressed: () => Navigator.pushNamed(context, '/customerList'),
-       //normaldialog
-      //  onPressed: () {
-          // print('user = $user , password =$password');
-          // if ((user?.isEmpty ?? true) || (password?.isEmpty ?? true)) {
-          //   normalDialog(context, 'Have Space ? Please Fill Every Blank');
-          // } else {
-          //   checkAuthen();
-          // }
+        onPressed: () => Navigator.pushNamed(context, '/myService'),
+        //normaldialog
+        //  onPressed: () {
+        // print('user = $user , password =$password');
+        // if ((user?.isEmpty ?? true) || (password?.isEmpty ?? true)) {
+        //   normalDialog(context, 'Have Space ? Please Fill Every Blank');
+        // } else {
+        //   checkAuthen();
+        // }
         // },
         child: Text(
           'Login',
@@ -54,22 +54,24 @@ Container buildLogin() {
     );
   }
 
-
   Container buildUser() {
     return Container(
       margin: EdgeInsets.only(top: 16),
       width: screen * 0.6,
       child: TextField(
         decoration: InputDecoration(
+          hintStyle: TextStyle(color: MyStyle().darkColor),
+          prefixIcon: Icon(
+            Icons.face,
+            color: MyStyle().darkColor,
+          ),
           hintText: 'User',
           enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-            color: MyStyle().darkColor,
-          )),
+             borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(color: MyStyle().darkColor)),
           focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-            color: MyStyle().lightColor,
-          )),
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(color: MyStyle().lightColor)),
         ),
       ),
     );
@@ -80,22 +82,35 @@ Container buildLogin() {
       margin: EdgeInsets.only(top: 16),
       width: screen * 0.6,
       child: TextField(
+        obscureText: status,
         decoration: InputDecoration(
+          suffixIcon: IconButton(
+            icon: status
+                ? Icon(Icons.remove_red_eye)
+                : Icon(Icons.remove_red_eye_outlined),
+            onPressed: () {
+              setState(() {
+                status = !status;
+              });
+              print('You click red eye **************** status = $status');
+            },
+          ),
+          hintStyle: TextStyle(color: MyStyle().darkColor),
+          prefixIcon: Icon(
+            Icons.lock,
+            color: MyStyle().darkColor,
+          ),
           hintText: 'Password',
           enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-            color: MyStyle().darkColor,
-          )),
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(color: MyStyle().darkColor)),
           focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-            color: MyStyle().lightColor,
-          )),
+              borderRadius: BorderRadius.circular(15), 
+              borderSide: BorderSide(color: MyStyle().lightColor)),
         ),
       ),
     );
   }
-
-
 
   Text buildText() => Text(
         'SurveyApp',
