@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-class addCustomer extends StatefulWidget {
+import 'package:survey_project/utility/my_style.dart';
+
+class AddCustomer extends StatefulWidget {
   @override
-  _addCustomerState createState() => _addCustomerState();
+  _AddCustomerState createState() => _AddCustomerState();
 }
 
-class _addCustomerState extends State<addCustomer> {
+class _AddCustomerState extends State<AddCustomer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
+      appBar: AppBar(
+        title: Text('Add Customer'),
+        backgroundColor: MyStyle().primaryColor,
+      ),
     );
   }
 }

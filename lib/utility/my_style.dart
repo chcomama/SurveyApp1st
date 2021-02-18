@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:survey_project/main.dart';
 
@@ -17,6 +19,28 @@ class MyStyle {
     color: Colors.red.shade700,
     fontWeight: FontWeight.bold,
   );
+
+ Widget buildSignOut(BuildContext context)  {
+    return ListTile(
+            onTap: () async {
+              //Signout
+              await Firebase.initializeApp().then((value) async {
+                await FirebaseAuth.instance.signOut().then((value) =>
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, '/authen', (route) => false));
+              });
+            },
+            tileColor: Colors.red[500],
+            leading: Icon(
+              Icons.exit_to_app,
+              color: Colors.white,
+            ),
+            title: Text(
+              'Sign Out',
+              style: MyStyle().whiteStyle(),
+            ),
+          );
+  }
 
   MyStyle();
 }

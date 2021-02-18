@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:survey_project/utility/my_style.dart';
 
-class customerList extends StatefulWidget {
+class CustomerList extends StatefulWidget {
   @override
-  _customerListState createState() => _customerListState();
+  _CustomerListState createState() => _CustomerListState();
 }
 
-class _customerListState extends State<customerList> {
+class _CustomerListState extends State<CustomerList> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(backgroundColor: MyStyle().primaryColor,
+        onPressed: () => Navigator.pushNamed(context, '/addCustomer'),
+        child: Icon(Icons.add),
+      ),
+      body: Text('Customer List'),
+    );
   }
 }
