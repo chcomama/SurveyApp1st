@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:survey_project/main.dart';
 
@@ -9,9 +11,12 @@ class MyStyle {
   Color darkColor = Color(0xff0086c3);
   Color primaryColor = Color(0xff29b6f6);
   Color lightColor = Color(0xff73e8ff);
-  
-  TextStyle whiteStyle() => TextStyle(color: Colors.white);
 
+  TextStyle whiteStyle() => TextStyle(color: Colors.white);
+  TextStyle redStyle() => TextStyle(
+    color: Colors.red.shade700,
+    fontWeight: FontWeight.bold,
+  );
 
   MyStyle();
 }
