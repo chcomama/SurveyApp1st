@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     ]);
 
     return MaterialApp(
-      //ทำให้debugmodeหายยยยยย
+      //ทำให้debugmodeหาย
       debugShowCheckedModeBanner: false,
       routes: myRoutes,
       initialRoute: '/authen',

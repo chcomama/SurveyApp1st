@@ -11,23 +11,43 @@ class Authen extends StatefulWidget {
 class _AuthenState extends State<Authen> {
   double screen;
   bool status = true;
+  String user, password;
   @override
   Widget build(BuildContext context) {
     screen = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: Center(
+      floatingActionButton: buildRegister(),
+      body: Container(
+        //BoxDecoration(color: MyStyle().lightColor)  สีล้วน
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment(0, -0.35),
+            radius: 0.9,
+            colors: <Color>[Colors.white, MyStyle().lightColor],
+          ),
+        ),
+        child: Center(
+            child: SingleChildScrollView(
           child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          buildLogo(),
-          buildText(),
-          buildUser(),
-          buildPassword(),
-          buildLogin(),
-        ],
-      )),
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              buildLogo(),
+              buildText(),
+              buildUser(),
+              buildPassword(),
+              buildLogin(),
+            ],
+          ),
+        )),
+      ),
     );
   }
+
+  TextButton buildRegister() => TextButton(
+      onPressed: () {},
+      child: Text(
+        'New Register',
+      ));
 
   Container buildLogin() {
     return Container(
@@ -56,6 +76,8 @@ class _AuthenState extends State<Authen> {
 
   Container buildUser() {
     return Container(
+      decoration: BoxDecoration(
+          color: Colors.white60, borderRadius: BorderRadius.circular(15)),
       margin: EdgeInsets.only(top: 16),
       width: screen * 0.6,
       child: TextField(
@@ -67,7 +89,7 @@ class _AuthenState extends State<Authen> {
           ),
           hintText: 'User',
           enabledBorder: OutlineInputBorder(
-             borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(15),
               borderSide: BorderSide(color: MyStyle().darkColor)),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
@@ -79,6 +101,8 @@ class _AuthenState extends State<Authen> {
 
   Container buildPassword() {
     return Container(
+      decoration: BoxDecoration(
+          color: Colors.white60, borderRadius: BorderRadius.circular(15)),
       margin: EdgeInsets.only(top: 16),
       width: screen * 0.6,
       child: TextField(
@@ -86,8 +110,14 @@ class _AuthenState extends State<Authen> {
         decoration: InputDecoration(
           suffixIcon: IconButton(
             icon: status
-                ? Icon(Icons.remove_red_eye)
-                : Icon(Icons.remove_red_eye_outlined),
+                ? Icon(
+                    Icons.remove_red_eye,
+                    color: MyStyle().darkColor,
+                  )
+                : Icon(
+                    Icons.remove_red_eye_outlined,
+                    color: MyStyle().darkColor,
+                  ),
             onPressed: () {
               setState(() {
                 status = !status;
@@ -105,7 +135,7 @@ class _AuthenState extends State<Authen> {
               borderRadius: BorderRadius.circular(15),
               borderSide: BorderSide(color: MyStyle().darkColor)),
           focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15), 
+              borderRadius: BorderRadius.circular(15),
               borderSide: BorderSide(color: MyStyle().lightColor)),
         ),
       ),
