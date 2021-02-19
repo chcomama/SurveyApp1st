@@ -33,8 +33,9 @@ dependencies:
   google_maps_flutter: ^1.0.10
   # firebase_messaging: ^7.0.3
   firebase_auth: ^0.18.4+1
+  image_picker: ^0.6.7+21
   # cloud_firestore: ^0.14.4
-  # image_picker: ^0.6.7+21
+
   # dio: ^3.0.10
   # cached_network_image: ^2.5.0
 

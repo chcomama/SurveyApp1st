@@ -80,7 +80,11 @@ class _AuthenState extends State<Authen> {
           color: Colors.white60, borderRadius: BorderRadius.circular(15)),
       margin: EdgeInsets.only(top: 16),
       width: screen * 0.6,
-      child: TextField(
+      child: TextField(  onChanged: (value) {
+          print('value = $value');
+          user = value.trim();
+          print('user = $user');
+        },
         decoration: InputDecoration(
           hintStyle: TextStyle(color: MyStyle().darkColor),
           prefixIcon: Icon(
