@@ -10,7 +10,7 @@ final Map<String, WidgetBuilder> myRoutes = {
 
 '/customerList':(BuildContext context)=> CustomerList(),
 '/reportSurvey':(BuildContext context)=> ReportSurvey(),
-'/addCustomer':(BuildContext context)=> AddCustomer(),
+'/addcustomer':(BuildContext context)=> AddCustomer(),
 '/myService':(BuildContext context)=> MyService(),
 '/register':(BuildContext context)=> Register(),
 '/authen':(BuildContext context)=> Authen(),

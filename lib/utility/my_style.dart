@@ -14,6 +14,12 @@ class MyStyle {
   Color primaryColor = Color(0xff29b6f6);
   Color lightColor = Color(0xff73e8ff);
 
+
+//loading
+  Widget showProgress() => Center(child: CircularProgressIndicator());
+
+
+
   TextStyle whiteStyle() => TextStyle(color: Colors.white);
   TextStyle redStyle() => TextStyle(
     color: Colors.red.shade700,
@@ -42,5 +48,28 @@ class MyStyle {
           );
   }
 
+
+ TextStyle pinkStyle() => TextStyle(color: Colors.pink);
+
+ TextStyle titleH0Style() => TextStyle(
+        color: Colors.red.shade700,
+        fontSize: 35,
+        fontWeight: FontWeight.bold,
+      );
+  TextStyle titleH1Style() => TextStyle(
+        color: darkColor,
+        fontSize: 30,
+        fontWeight: FontWeight.bold,
+      );
+
+  TextStyle titleH2Style() => TextStyle(
+        color: darkColor,
+        fontSize: 18,
+        fontWeight: FontWeight.w500,
+      );
+//Methodหาอัตราส่วนหน้าจอ
+  double findScreen(BuildContext context) {
+    return MediaQuery.of(context).size.width;
+  }
   MyStyle();
 }
