@@ -30,7 +30,8 @@ class _AddCustomerState extends State<AddCustomer> {
   Future<Null> findUid() async {
     await Firebase.initializeApp().then((value) async {
       await FirebaseAuth.instance.authStateChanges().listen((event) {
-        uid = event.uid;
+        // uid = event.uid;
+        uid = 'a1234';
       });
     });
   }
@@ -270,11 +271,11 @@ class _AddCustomerState extends State<AddCustomer> {
       await Dio()
           .post(MyConstant().urlSaveFile, data: data)
           .then((value) async {
-        urlPath = 'SurveyNetwork/$nameImage';
+        urlPath = 'Customer/$nameImage';
         print('************ ${MyConstant().domain}$urlPath');
 
         String urlAPI =
-            'https://smicb.osotspa.com/smicprogram/QAS/addData.php?isAdd=true&uidshop=$uid&name=$name&tel=$tel&city=$city&urlproduct=$urlPath';
+            'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/addData.php?isAdd=true&uidshop=$uid&name=$name&tel=$tel&city=$city&urlproduct=$urlPath';
 
         //  'https://www.androidthai.in.th/osp/addDataMa.php?isAdd=true&uidshop=$uid&name=$name&detail=$tel&price=$city&urlproduct=$urlPath';
 

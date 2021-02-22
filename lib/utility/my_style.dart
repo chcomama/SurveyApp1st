@@ -28,24 +28,24 @@ class MyStyle {
 
  Widget buildSignOut(BuildContext context)  {
     return ListTile(
-            onTap: () async {
-              //Signout
-              await Firebase.initializeApp().then((value) async {
-                await FirebaseAuth.instance.signOut().then((value) =>
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, '/authen', (route) => false));
-              });
-            },
-            tileColor: Colors.red[500],
-            leading: Icon(
-              Icons.exit_to_app,
-              color: Colors.white,
-            ),
-            title: Text(
-              'Sign Out',
-              style: MyStyle().whiteStyle(),
-            ),
-          );
+        onTap: () async {
+          //Signout
+          await Firebase.initializeApp().then((value) async {
+            await FirebaseAuth.instance.signOut().then((value) =>
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/authen', (route) => false));
+          });
+        },
+        tileColor: Colors.red[500],
+        leading: Icon(
+          Icons.exit_to_app,
+          color: Colors.white,
+        ),
+        title: Text(
+          'Sign Out',
+          style: MyStyle().whiteStyle(),
+        ),
+      );
   }
 
 
@@ -53,12 +53,12 @@ class MyStyle {
 
  TextStyle titleH0Style() => TextStyle(
         color: Colors.red.shade700,
-        fontSize: 35,
+        fontSize: 20,
         fontWeight: FontWeight.bold,
       );
   TextStyle titleH1Style() => TextStyle(
         color: darkColor,
-        fontSize: 30,
+        fontSize: 20,
         fontWeight: FontWeight.bold,
       );
 

@@ -33,14 +33,14 @@ class _CustomerListState extends State<CustomerList> {
 //หาUid
     await Firebase.initializeApp().then((value) async {
       await FirebaseAuth.instance.authStateChanges().listen((event) async {
-       // String uid = event.uid;
+        // String uid = event.uid;
         String uid = 'a1234';
         print('*******  Read All Product work uid => $uid');
 
         String urlAPI =
-            'https://smicb.osotspa.com/smicprogram/QAS/getProductWhereUi.php?isAdd=true&uid=a1234';
-       print('url___________>$urlAPI');
-       
+            'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/getProductWhereUi.php?isAdd=true&uid=a1234';
+        print('url___________>$urlAPI');
+
         await Dio().get(urlAPI).then((value) {
           print('****  value = $value');
           //แปลงโค้ดให้เป็น utf8
@@ -93,33 +93,12 @@ class _CustomerListState extends State<CustomerList> {
                       : Colors.grey.shade200,
                   child: Row(
                     children: [
-                      Container(
-                        //ขยับให้ตัวหนังสือขยับเข้ามา
-                        padding: EdgeInsets.all(8),
-                        width: screen * 0.5 - 5,
-                        height: screen * 0.5,
-                        child: Column(
-                          //เรียงซ้ายไปขวา
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              productmodel[index].name,
-                              style: MyStyle().titleH1Style(),
-                            ),
-                            Text(
-                              ' ${productmodel[index].price} BTH',
-                              style: MyStyle().titleH0Style(),
-                            ),
-                            Text(cutDetail(productmodel[index].detail)),
-                          ],
-                        ),
-                      ),
-                      Container(
+                       Container(
                         padding: EdgeInsets.all(8),
                         //ดึงภาพมาโชว์
-                        width: screen * 0.5 - 5,
-                        height: screen * 0.5,
+                        width: screen *0.25,
+                        height: screen * 0.25,
+                      
                         child: CachedNetworkImage(
                             //ถ้าไม่เจอรูปให้โชว์รูปอื่นแทน
                             errorWidget: (context, url, error) =>
@@ -129,7 +108,30 @@ class _CustomerListState extends State<CustomerList> {
                                 MyStyle().showProgress(),
                             imageUrl:
                                 '${MyConstant().domain}${productmodel[index].urlproduct}'),
-                      )
+                      ),
+                      Container(
+                        //ขยับให้ตัวหนังสือขยับเข้ามา
+                        padding: EdgeInsets.all(8),
+                        width: screen * 0.5 - 5,
+                        // height: screen * 0.5,
+                        child: Column(
+                          //เรียงซ้ายไปขวา
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '${productmodel[index].name}',
+                              style: MyStyle().titleH1Style(),
+                            ),
+                            Text(
+                              'จังหวัด : ${productmodel[index].price}',
+                              style: MyStyle().titleH0Style(),
+                            ),
+                            Text('โทร : ${cutDetail(productmodel[index].detail)}'),
+                          ],
+                        ),
+                      ),
+                     
                     ],
                   ),
                 ),
