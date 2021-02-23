@@ -5,7 +5,9 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:location/location.dart';
 import 'package:survey_project/utility/dialog.dart';
 import 'package:survey_project/utility/my_constant.dart';
 import 'package:survey_project/utility/my_style.dart';
@@ -18,13 +20,34 @@ class AddCustomer extends StatefulWidget {
 class _AddCustomerState extends State<AddCustomer> {
   double screen;
   File file;
-  String name, tel, city, urlPath, uid;
+  String name, tel, tel2, city, urlPath, uid, customerStatus;
   bool statusProgress = false;
+  String dropdownValue = '1';
+  double lat, lng;
 
   @override
   void initState() {
     super.initState();
     findUid();
+    findLatLng();
+  }
+
+  Future<Null> findLatLng() async {
+    LocationData locationData = await findLocationData();
+    setState(() {
+      lat = locationData.latitude;
+      lng = locationData.longitude;
+    });
+    print('*******************lat ==> $lat Long===>$lng');
+  }
+
+  Future<LocationData> findLocationData() async {
+    Location location = Location();
+    try {
+      return location.getLocation();
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<Null> findUid() async {
@@ -41,7 +64,7 @@ class _AddCustomerState extends State<AddCustomer> {
       decoration: BoxDecoration(
           color: Colors.white60, borderRadius: BorderRadius.circular(15)),
       margin: EdgeInsets.only(top: 16),
-      width: screen * 0.6,
+      width: screen * 0.8,
       child: TextField(
         onChanged: (value) => name = value.trim(),
         decoration: InputDecoration(
@@ -67,16 +90,44 @@ class _AddCustomerState extends State<AddCustomer> {
       decoration: BoxDecoration(
           color: Colors.white60, borderRadius: BorderRadius.circular(15)),
       margin: EdgeInsets.only(top: 16),
-      width: screen * 0.6,
+      width: screen * 0.8,
       child: TextField(
+        keyboardType: TextInputType.number,
         onChanged: (value) => tel = value.trim(),
         decoration: InputDecoration(
           hintStyle: TextStyle(color: MyStyle().darkColor),
           prefixIcon: Icon(
-            Icons.phone,
+            Icons.phone_android_sharp,
             color: MyStyle().darkColor,
           ),
           hintText: 'เบอร์ติดต่อ',
+          enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(color: MyStyle().darkColor)),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(color: MyStyle().lightColor)),
+        ),
+      ),
+    );
+  }
+
+  Container buildTel2() {
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white70, borderRadius: BorderRadius.circular(15)),
+      margin: EdgeInsets.only(top: 16),
+      width: screen * 0.8,
+      child: TextField(
+        keyboardType: TextInputType.number,
+        onChanged: (value) => tel2 = value.trim(),
+        decoration: InputDecoration(
+          hintStyle: TextStyle(color: MyStyle().darkColor),
+          prefixIcon: Icon(
+            Icons.phone_android,
+            color: MyStyle().darkColor,
+          ),
+          hintText: 'เบอร์ติดต่อ2',
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
               borderSide: BorderSide(color: MyStyle().darkColor)),
@@ -93,7 +144,7 @@ class _AddCustomerState extends State<AddCustomer> {
       decoration: BoxDecoration(
           color: Colors.white60, borderRadius: BorderRadius.circular(15)),
       margin: EdgeInsets.only(top: 16),
-      width: screen * 0.6,
+      width: screen * 0.8,
       child: TextField(
         onChanged: (value) => city = value.trim(),
         decoration: InputDecoration(
@@ -103,6 +154,32 @@ class _AddCustomerState extends State<AddCustomer> {
             color: MyStyle().darkColor,
           ),
           hintText: 'จังหวัด',
+          enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(color: MyStyle().darkColor)),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(color: MyStyle().lightColor)),
+        ),
+      ),
+    );
+  }
+
+  Container buildCustomerStatus() {
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white60, borderRadius: BorderRadius.circular(15)),
+      margin: EdgeInsets.only(top: 16),
+      width: screen * 0.8,
+      child: TextField(
+        onChanged: (value) => customerStatus = value.trim(),
+        decoration: InputDecoration(
+          hintStyle: TextStyle(color: MyStyle().darkColor),
+          prefixIcon: Icon(
+            Icons.category_sharp,
+            color: MyStyle().darkColor,
+          ),
+          hintText: 'สถานะ',
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
               borderSide: BorderSide(color: MyStyle().darkColor)),
@@ -141,17 +218,40 @@ class _AddCustomerState extends State<AddCustomer> {
           buildRowImage(),
           buildCustName(),
           buildTel(),
+          buildTel2(),
           buildCity(),
-          buildSaveCustomer()
+          buildCustomerStatus(),
+          // buildDropdownButton(),
+          lat == null ? MyStyle().showProgress() : showMap(),
+          buildSaveCustomer(),
         ],
       ),
+    );
+  }
+
+//TestDropdow
+  DropdownButton<String> buildDropdownButton() {
+    return DropdownButton<String>(
+      value: dropdownValue,
+      onChanged: (String newValue) {
+        setState(() {
+          dropdownValue = newValue;
+        });
+      },
+      items: <String>['1', '2', '3', '4']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
     );
   }
 
   Container buildSaveCustomer() {
     return Container(
       margin: EdgeInsets.only(top: 16),
-      width: screen * 0.6,
+      width: screen * 0.8,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           primary: MyStyle().darkColor,
@@ -174,6 +274,34 @@ class _AddCustomerState extends State<AddCustomer> {
           print('******************** name = $name  tel = $tel  city = $city');
         },
         child: Text('Save Customer'),
+      ),
+    );
+  }
+
+  Set<Marker> myMarker() {
+    return <Marker>[
+      Marker(
+          markerId: MarkerId('myShop'),
+          position: LatLng(lat, lng),
+          infoWindow:
+              InfoWindow(title: 'ฉันอยู่ที่นี่', snippet: 'Lat=$lat,Long=$lng'))
+    ].toSet();
+  }
+
+  Container showMap() {
+    LatLng latLng = LatLng(lat, lng);
+    CameraPosition cameraPosition = CameraPosition(
+      target: latLng,
+      zoom: 16.0,
+    );
+    return Container(
+      margin: EdgeInsets.only(top: 16),
+      height: 200,width: 300,
+      child: GoogleMap(
+        initialCameraPosition: cameraPosition,
+        mapType: MapType.normal,
+        onMapCreated: (controller) {},
+        markers: myMarker(),
       ),
     );
   }
@@ -252,10 +380,10 @@ class _AddCustomerState extends State<AddCustomer> {
           child:
               file == null ? Image.asset('images/image.png') : Image.file(file),
         ),
-        IconButton(
-          icon: Icon(Icons.add_photo_alternate),
-          onPressed: () => chooseSourceImage(ImageSource.gallery),
-        ),
+        // IconButton(
+        //   icon: Icon(Icons.add_photo_alternate),
+        //   onPressed: () => chooseSourceImage(ImageSource.gallery),
+        // ),
       ],
     );
   }

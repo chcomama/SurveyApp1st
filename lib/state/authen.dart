@@ -1,6 +1,9 @@
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:survey_project/utility/dialog.dart';
 import 'package:survey_project/utility/my_style.dart';
 
 class Authen extends StatefulWidget {
@@ -161,5 +164,34 @@ class _AuthenState extends State<Authen> {
       width: screen * 0.33,
       child: Image.asset('images/logo.png'),
     );
+  }
+    //async ใส่รหว่าง()กับ{}
+  Future<Null> checkAuthen() async {
+    await Firebase.initializeApp().then((value) async {
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: user, password: password)
+          .then(
+        (value) async {
+          String uid = value.user.uid;
+
+          print('uid = $uid');
+          //snapshots=อ่านจากฐานข้อมูล
+     
+          // await FirebaseFirestore.instance
+          //     .collection('typeuser')
+          //     .doc(uid)
+          //     .snapshots()
+          //     .listen((event) {
+          //   String typeUser = event.data()['typeuser'];
+          //   print('##################   typeUser = $typeUser');
+
+          //   Navigator.pushNamedAndRemoveUntil(
+          //       context, '/myService$typeUser', (route) => false);
+          // });
+        },
+      ).catchError((value) {
+        normalDialog(context, value.message);
+      });
+    });
   }
 }
