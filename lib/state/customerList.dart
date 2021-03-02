@@ -5,7 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:survey_project/model/product_model.dart';
+import 'package:survey_project/model/customer_model.dart';
+
 import 'package:survey_project/utility/my_constant.dart';
 import 'package:survey_project/utility/my_style.dart';
 
@@ -15,7 +16,8 @@ class CustomerList extends StatefulWidget {
 }
 
 class _CustomerListState extends State<CustomerList> {
-  List<ProductModel> productmodel = List();
+  // List<ProductModel> productmodel = List();
+  List<CustomerModel> customermodel = List();
   double screen;
 
   @override
@@ -26,8 +28,8 @@ class _CustomerListState extends State<CustomerList> {
   }
 
   Future<Null> readAllProduct() async {
-    if (productmodel.length != 0) {
-      productmodel.clear();
+    if (customermodel.length != 0) {
+      customermodel.clear();
     }
 
 //หาUid
@@ -38,8 +40,8 @@ class _CustomerListState extends State<CustomerList> {
         print('*******  Read All Product work uid => $uid');
 
         String urlAPI =
-            'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/getProductWhereUi.php?isAdd=true&uid=a1234';
-        print('url___________>$urlAPI');
+            'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/getProductWhereUi.php?isAdd=true&uid=$uid';
+        // print('url___________***>$urlAPI');
 
         await Dio().get(urlAPI).then((value) {
           print('****  value = $value');
@@ -49,9 +51,10 @@ class _CustomerListState extends State<CustomerList> {
 
           //เอาค่าออกมาโชว์
           for (var item in result) {
-            ProductModel model = ProductModel.fromMap(item);
+            CustomerModel model = CustomerModel.fromMap(item);
             setState(() {
-              productmodel.add(model);
+              customermodel.add(model);
+              print('loppppp');
             });
           }
         });
@@ -82,10 +85,10 @@ class _CustomerListState extends State<CustomerList> {
               .then((value) => readAllProduct()),
           child: Icon(Icons.add),
         ),
-        body: productmodel.length == 0
+        body: customermodel.length == 0
             ? MyStyle().showProgress()
             : ListView.builder(
-                itemCount: productmodel.length,
+                itemCount: customermodel.length,
                 itemBuilder: (context, index) => Card(
                   //เรียงสีสลับกัน
                   color: index % 2 == 0
@@ -93,12 +96,12 @@ class _CustomerListState extends State<CustomerList> {
                       : Colors.grey.shade200,
                   child: Row(
                     children: [
-                       Container(
+                      Container(
                         padding: EdgeInsets.all(8),
                         //ดึงภาพมาโชว์
-                        width: screen *0.25,
+                        width: screen * 0.25,
                         height: screen * 0.25,
-                      
+
                         child: CachedNetworkImage(
                             //ถ้าไม่เจอรูปให้โชว์รูปอื่นแทน
                             errorWidget: (context, url, error) =>
@@ -107,7 +110,7 @@ class _CustomerListState extends State<CustomerList> {
                             placeholder: (context, url) =>
                                 MyStyle().showProgress(),
                             imageUrl:
-                                '${MyConstant().domain}${productmodel[index].urlproduct}'),
+                                '${MyConstant().domain}${customermodel[index].urlproduct}'),
                       ),
                       Container(
                         //ขยับให้ตัวหนังสือขยับเข้ามา
@@ -120,18 +123,18 @@ class _CustomerListState extends State<CustomerList> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '${productmodel[index].name}',
+                              '${customermodel[index].sh_name}',
                               style: MyStyle().titleH1Style(),
                             ),
                             Text(
-                              'จังหวัด : ${productmodel[index].price}',
+                              'จังหวัด : ${customermodel[index].sh_city}',
                               style: MyStyle().titleH0Style(),
                             ),
-                            Text('โทร : ${cutDetail(productmodel[index].detail)}'),
+                            Text(
+                                'โทร : ${customermodel[index].tel}'),
                           ],
                         ),
                       ),
-                     
                     ],
                   ),
                 ),

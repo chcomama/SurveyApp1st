@@ -20,7 +20,7 @@ class AddCustomer extends StatefulWidget {
 class _AddCustomerState extends State<AddCustomer> {
   double screen;
   File file;
-  String name, tel, tel2, city, urlPath, uid, customerStatus;
+  String sh_code,name, tel, tel2, city, urlPath, uid, custStatus;
   bool statusProgress = false;
   String dropdownValue = '1';
   double lat, lng;
@@ -172,7 +172,7 @@ class _AddCustomerState extends State<AddCustomer> {
       margin: EdgeInsets.only(top: 16),
       width: screen * 0.8,
       child: TextField(
-        onChanged: (value) => customerStatus = value.trim(),
+        onChanged: (value) => custStatus = value.trim(),
         decoration: InputDecoration(
           hintStyle: TextStyle(color: MyStyle().darkColor),
           prefixIcon: Icon(
@@ -296,7 +296,8 @@ class _AddCustomerState extends State<AddCustomer> {
     );
     return Container(
       margin: EdgeInsets.only(top: 16),
-      height: 200,width: 300,
+      height: 200,
+      width: 300,
       child: GoogleMap(
         initialCameraPosition: cameraPosition,
         mapType: MapType.normal,
@@ -391,6 +392,7 @@ class _AddCustomerState extends State<AddCustomer> {
   Future<Null> uploadImageAndInsertData() async {
     int i = Random().nextInt(1000000);
     String nameImage = 'Cust$i.jpg';
+  
     try {
       Map<String, dynamic> map = Map();
       map['file'] =
@@ -400,15 +402,16 @@ class _AddCustomerState extends State<AddCustomer> {
           .post(MyConstant().urlSaveFile, data: data)
           .then((value) async {
         urlPath = 'Customer/$nameImage';
+        sh_code = '$uid$i';
         print('************ ${MyConstant().domain}$urlPath');
 
         String urlAPI =
-            'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/addData.php?isAdd=true&uidshop=$uid&name=$name&tel=$tel&city=$city&urlproduct=$urlPath';
-
+            'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/addData.php?isAdd=true&uidshop=$uid&sh_code=$sh_code&name=$name&tel=$tel&tel2=$tel2&city=$city&custStatus=$custStatus&urlproduct=$urlPath&lat=$lat&lng=$lng';
+  print('url___________>$urlAPI');
         //  'https://www.androidthai.in.th/osp/addDataMa.php?isAdd=true&uidshop=$uid&name=$name&detail=$tel&price=$city&urlproduct=$urlPath';
 
         await Dio().get(urlAPI).then((value) => Navigator.pop(context));
-        print('url___________>$urlAPI');
+      
       }).catchError((value) {
         print('################# ${value.toString()}');
       });
