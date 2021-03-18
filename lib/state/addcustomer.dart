@@ -20,7 +20,7 @@ class AddCustomer extends StatefulWidget {
 class _AddCustomerState extends State<AddCustomer> {
   double screen;
   File file;
-  String sh_code,name, tel, tel2, city, urlPath, uid, custStatus;
+  String sh_code,name, tel1, tel2, city, urlPath, uid, custStatus;
   bool statusProgress = false;
   String dropdownValue = '1';
   double lat, lng;
@@ -54,7 +54,7 @@ class _AddCustomerState extends State<AddCustomer> {
     await Firebase.initializeApp().then((value) async {
       await FirebaseAuth.instance.authStateChanges().listen((event) {
         // uid = event.uid;
-        uid = 'a1234';
+        uid = 'a12345';
       });
     });
   }
@@ -93,7 +93,7 @@ class _AddCustomerState extends State<AddCustomer> {
       width: screen * 0.8,
       child: TextField(
         keyboardType: TextInputType.number,
-        onChanged: (value) => tel = value.trim(),
+        onChanged: (value) => tel1 = value.trim(),
         decoration: InputDecoration(
           hintStyle: TextStyle(color: MyStyle().darkColor),
           prefixIcon: Icon(
@@ -265,13 +265,13 @@ class _AddCustomerState extends State<AddCustomer> {
             normalDialog(
                 context, 'Please Choose Image ? by Click Camera Or Gallery');
           } else if ((name?.isEmpty ?? true) ||
-              (tel?.isEmpty ?? true) ||
+              (tel1?.isEmpty ?? true) ||
               (city?.isEmpty ?? true)) {
             normalDialog(context, 'Have Space ? Please Fill Every Blank');
           } else {
             confirmSave();
           }
-          print('******************** name = $name  tel = $tel  city = $city');
+          print('******************** name = $name  tel = $tel2  city = $city');
         },
         child: Text('Save Customer'),
       ),
@@ -315,7 +315,7 @@ class _AddCustomerState extends State<AddCustomer> {
         title: ListTile(
           leading: Image.file(file),
           title: Text(name),
-          subtitle: Text(tel),
+          subtitle: Text(tel1),
         ),
         children: [
           Row(
@@ -401,12 +401,12 @@ class _AddCustomerState extends State<AddCustomer> {
       await Dio()
           .post(MyConstant().urlSaveFile, data: data)
           .then((value) async {
-        urlPath = 'Customer/$nameImage';
+        urlPath = 'Customer/$uid/$nameImage';
         sh_code = '$uid$i';
         print('************ ${MyConstant().domain}$urlPath');
 
         String urlAPI =
-            'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/addData.php?isAdd=true&uidshop=$uid&sh_code=$sh_code&name=$name&tel=$tel&tel2=$tel2&city=$city&custStatus=$custStatus&urlproduct=$urlPath&lat=$lat&lng=$lng';
+            'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/addData.php?isAdd=true&uidshop=$uid&sh_code=$sh_code&name=$name&tel1=$tel1&tel2=$tel2&city=$city&custStatus=$custStatus&urlproduct=$urlPath&lat=$lat&lng=$lng';
   print('url___________>$urlAPI');
         //  'https://www.androidthai.in.th/osp/addDataMa.php?isAdd=true&uidshop=$uid&name=$name&detail=$tel&price=$city&urlproduct=$urlPath';
 

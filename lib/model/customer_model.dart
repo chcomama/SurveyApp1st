@@ -29,8 +29,8 @@ class CustomerModel {
   final String end;
   final String vendor;
   final String shipcode;
-  final String box_code;
-  final String tel;
+  final String tel1;
+  final String tel2;
   final String sp_code_city;
   final String sh_code_city;
   final String birth_date;
@@ -67,8 +67,8 @@ class CustomerModel {
     this.end,
     this.vendor,
     this.shipcode,
-    this.box_code,
-    this.tel,
+    this.tel1,
+    this.tel2,
     this.sp_code_city,
     this.sh_code_city,
     this.birth_date,
@@ -107,8 +107,8 @@ class CustomerModel {
     String end,
     String vendor,
     String shipcode,
-    String box_code,
-    String tel,
+    String tel1,
+    String tel2,
     String sp_code_city,
     String sh_code_city,
     String birth_date,
@@ -146,8 +146,9 @@ class CustomerModel {
       end: end ?? this.end,
       vendor: vendor ?? this.vendor,
       shipcode: shipcode ?? this.shipcode,
-      box_code: box_code ?? this.box_code,
-      tel: tel ?? this.tel,
+     
+      tel1: tel1 ?? this.tel1,
+        tel2: tel2 ?? this.tel2,
       sp_code_city: sp_code_city ?? this.sp_code_city,
       sh_code_city: sh_code_city ?? this.sh_code_city,
       birth_date: birth_date ?? this.birth_date,
@@ -188,8 +189,8 @@ class CustomerModel {
       'end': end,
       'vendor': vendor,
       'shipcode': shipcode,
-      'box_code': box_code,
-      'tel': tel,
+      'tel1': tel1,
+      'tel2': tel2,
       'sp_code_city': sp_code_city,
       'sh_code_city': sh_code_city,
       'birth_date': birth_date,
@@ -232,8 +233,8 @@ class CustomerModel {
       end: map['end'],
       vendor: map['vendor'],
       shipcode: map['shipcode'],
-      box_code: map['box_code'],
-      tel: map['tel'],
+      tel1: map['tel1'],
+      tel2: map['tel2'],
       sp_code_city: map['sp_code_city'],
       sh_code_city: map['sh_code_city'],
       birth_date: map['birth_date'],
@@ -250,7 +251,7 @@ class CustomerModel {
 
   @override
   String toString() {
-    return 'CustomerModel(id: $id, sp_code: $sp_code, sp_name: $sp_name, sp_district: $sp_district, sp_city: $sp_city, sh_code: $sh_code, sh_name: $sh_name, sh_district: $sh_district, sh_city: $sh_city, pak: $pak, status: $status, sdst: $sdst, salesorg: $salesorg, distribution_channel: $distribution_channel, urlproduct: $urlproduct, salesoffice: $salesoffice, channel1: $channel1, channel2: $channel2, channel3: $channel3, dc_code: $dc_code, dc_name: $dc_name, agentgroup: $agentgroup, lineno: $lineno, common: $common, start: $start, end: $end, vendor: $vendor, shipcode: $shipcode, box_code: $box_code, tel: $tel, sp_code_city: $sp_code_city, sh_code_city: $sh_code_city, birth_date: $birth_date, surveyor: $surveyor, lmtcode: $lmtcode, lat: $lat, long: $long)';
+    return 'CustomerModel(id: $id, sp_code: $sp_code, sp_name: $sp_name, sp_district: $sp_district, sp_city: $sp_city, sh_code: $sh_code, sh_name: $sh_name, sh_district: $sh_district, sh_city: $sh_city, pak: $pak, status: $status, sdst: $sdst, salesorg: $salesorg, distribution_channel: $distribution_channel, urlproduct: $urlproduct, salesoffice: $salesoffice, channel1: $channel1, channel2: $channel2, channel3: $channel3, dc_code: $dc_code, dc_name: $dc_name, agentgroup: $agentgroup, lineno: $lineno, common: $common, start: $start, end: $end, vendor: $vendor, shipcode: $shipcode, tel1: $tel1, tel2: $tel2, sp_code_city: $sp_code_city, sh_code_city: $sh_code_city, birth_date: $birth_date, surveyor: $surveyor, lmtcode: $lmtcode, lat: $lat, long: $long)';
   }
 
   @override
@@ -286,8 +287,8 @@ class CustomerModel {
       o.end == end &&
       o.vendor == vendor &&
       o.shipcode == shipcode &&
-      o.box_code == box_code &&
-      o.tel == tel &&
+      o.tel1 == tel1 &&
+      o.tel2 == tel2 &&
       o.sp_code_city == sp_code_city &&
       o.sh_code_city == sh_code_city &&
       o.birth_date == birth_date &&
@@ -327,8 +328,8 @@ class CustomerModel {
       end.hashCode ^
       vendor.hashCode ^
       shipcode.hashCode ^
-      box_code.hashCode ^
-      tel.hashCode ^
+      tel1.hashCode ^
+      tel2.hashCode ^
       sp_code_city.hashCode ^
       sh_code_city.hashCode ^
       birth_date.hashCode ^
