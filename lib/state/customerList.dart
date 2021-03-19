@@ -132,6 +132,7 @@ class _CustomerListState extends State<CustomerList> {
                                 ),
                                 Text(
                                   'โทร : ${customermodel[index].tel1},${customermodel[index].tel2}',
+                                
                                 ),
                                 Text(
                                   'Map : ${customermodel[index].lat},${customermodel[index].long}',

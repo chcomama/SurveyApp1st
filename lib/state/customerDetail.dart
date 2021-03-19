@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:survey_project/model/customer_model.dart';
+import 'package:survey_project/state/Survey.dart';
 import 'package:survey_project/utility/my_constant.dart';
 import 'package:survey_project/utility/my_style.dart';
 
@@ -27,7 +28,7 @@ class _Customer_DetailState extends State<Customer_Detail> {
     screen = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Customer :  ${customerModel.sh_name}'),
+        title: Text('ร้าน :  ${customerModel.sh_name}'),
         backgroundColor: MyStyle().primaryColor,
       ),
       body: Stack(
@@ -47,8 +48,11 @@ class _Customer_DetailState extends State<Customer_Detail> {
           SizedBox(height: 30),
           buildShowImage(),
           buildCustName(),
-          buildTel(),
+          buildTel1(),
           buildTel2(),
+          buildCity(),
+          buildCustStatus(),
+          buildGotoSurvey(),
         ],
       ),
     );
@@ -77,54 +81,38 @@ class _Customer_DetailState extends State<Customer_Detail> {
           color: Colors.white60, borderRadius: BorderRadius.circular(15)),
       margin: EdgeInsets.only(top: 16),
       width: screen * 0.8,
-      child: TextField(
-        onChanged: (value) => name = value.trim(),
-
-        //   initialValue: sh_code,
-        decoration: InputDecoration(
-          hintStyle: TextStyle(color: MyStyle().darkColor),
-          prefixIcon: Icon(
+      child: Row(
+        children: <Widget>[
+          Icon(
             Icons.store,
-            color: MyStyle().darkColor,
+            color: Colors.grey,
           ),
-          hintText: customerModel.sh_name,
-          // hintText: 'ชื่อร้านค้า',
-          enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(color: MyStyle().darkColor)),
-          focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(color: MyStyle().lightColor)),
-        ),
+          SizedBox(
+            width: 20,
+          ),
+          Text(customerModel.sh_name),
+        ],
       ),
     );
   }
 
-  Container buildTel() {
+  Container buildTel1() {
     return Container(
       decoration: BoxDecoration(
           color: Colors.white60, borderRadius: BorderRadius.circular(15)),
       margin: EdgeInsets.only(top: 16),
       width: screen * 0.8,
-      child: TextField(
-        onChanged: (value) => tel1 = value.trim(),
-
-        //   initialValue: sh_code,
-        decoration: InputDecoration(
-          hintStyle: TextStyle(color: MyStyle().darkColor),
-          prefixIcon: Icon(
+      child: Row(
+        children: <Widget>[
+          Icon(
             Icons.phone,
-            color: MyStyle().darkColor,
+            color: Colors.grey,
           ),
-          hintText: custTel1(customerModel.tel1),
-          //hintText: 'ชื่อร้านค้า',
-          enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(color: MyStyle().darkColor)),
-          focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(color: MyStyle().lightColor)),
-        ),
+          SizedBox(
+            width: 20,
+          ),
+          Text(customerModel.tel1),
+        ],
       ),
     );
   }
@@ -135,48 +123,89 @@ class _Customer_DetailState extends State<Customer_Detail> {
           color: Colors.white60, borderRadius: BorderRadius.circular(15)),
       margin: EdgeInsets.only(top: 16),
       width: screen * 0.8,
-      child: TextField(
-        onChanged: (value) => tel2 = value.trim(),
-
-        //   initialValue: sh_code,
-        decoration: InputDecoration(
-          hintStyle: TextStyle(color: MyStyle().darkColor),
-          prefixIcon: Icon(
+      child: Row(
+        children: <Widget>[
+          Icon(
             Icons.phone_android,
-            color: MyStyle().darkColor,
+            color: Colors.grey,
           ),
-          hintText: custTel2(customerModel.tel2),
-          // hintText: 'ชื่อร้านค้า',
-          enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(color: MyStyle().darkColor)),
-          focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(color: MyStyle().lightColor)),
-        ),
+          SizedBox(
+            width: 20,
+          ),
+          Text(customerModel.tel2),
+        ],
       ),
     );
   }
 
-  //methodตัดคำ
-  String custTel1(String string) {
-    String result = string;
-    if (result.length > 10) {
-      result = result.substring(0, 10);
-      result = '$result';
-    }
-    //ทำเสร็จส่งค่ากลับ
-    return result;
+  Container buildCity() {
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white60, borderRadius: BorderRadius.circular(15)),
+      margin: EdgeInsets.only(top: 16),
+      width: screen * 0.8,
+      child: Row(
+        children: <Widget>[
+          Icon(
+            Icons.location_city,
+            color: Colors.grey,
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          Text(customerModel.sh_city),
+        ],
+      ),
+    );
   }
 
-  String custTel2(String string) {
-    String result2 = string;
-    if (result2.length != null) {
-   
-      result2 = '$result2';
-      print('********************result2--$result2');
-    }
-    //ทำเสร็จส่งค่ากลับ
-    return result2;
+  Container buildCustStatus() {
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white60, borderRadius: BorderRadius.circular(15)),
+      margin: EdgeInsets.only(top: 16),
+      width: screen * 0.8,
+      child: Row(
+        children: <Widget>[
+          // Icon(
+          //   Icons.crop_square,
+          //   color: Colors.grey,
+          // ),
+          Text('Status :'),
+          SizedBox(
+            width: 20,
+          ),
+          Text(customerModel.status),
+        ],
+      ),
+    );
+  }
+
+  Container buildGotoSurvey() {
+    return Container(
+      margin: EdgeInsets.only(top: 16),
+      width: screen * 0.8,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: MyStyle().darkColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        onPressed: () {
+          
+          MaterialPageRoute route = MaterialPageRoute(
+            builder: (context) => survey_first(
+           
+            ),
+          );
+            Navigator.push(context, route);
+
+
+
+        },
+        child: Text('สำรวจ'),
+      ),
+    );
   }
 }

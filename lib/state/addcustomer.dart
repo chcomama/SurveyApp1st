@@ -20,7 +20,7 @@ class AddCustomer extends StatefulWidget {
 class _AddCustomerState extends State<AddCustomer> {
   double screen;
   File file;
-  String sh_code,name, tel1, tel2, city, urlPath, uid, custStatus;
+  String sh_code, name, tel1, tel2, city, urlPath, uid, custStatus;
   bool statusProgress = false;
   String dropdownValue = '1';
   double lat, lng;
@@ -392,28 +392,25 @@ class _AddCustomerState extends State<AddCustomer> {
   Future<Null> uploadImageAndInsertData() async {
     int i = Random().nextInt(1000000);
     String nameImage = 'Cust$i.jpg';
-  
+    String pathImage = '${MyConstant().urlSaveFile}$uid';
+    // print('pathImage========> $pathImage');
     try {
       Map<String, dynamic> map = Map();
       map['file'] =
           await MultipartFile.fromFile(file.path, filename: nameImage);
       FormData data = FormData.fromMap(map);
-      await Dio()
-          .post(MyConstant().urlSaveFile, data: data)
-          .then((value) async {
+      await Dio().post(pathImage, data: data).then((value) async {
         urlPath = 'Customer/$uid/$nameImage';
         sh_code = '$uid$i';
         print('************ ${MyConstant().domain}$urlPath');
 
         String urlAPI =
             'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/addData.php?isAdd=true&uidshop=$uid&sh_code=$sh_code&name=$name&tel1=$tel1&tel2=$tel2&city=$city&custStatus=$custStatus&urlproduct=$urlPath&lat=$lat&lng=$lng';
-  print('url___________>$urlAPI');
-        //  'https://www.androidthai.in.th/osp/addDataMa.php?isAdd=true&uidshop=$uid&name=$name&detail=$tel&price=$city&urlproduct=$urlPath';
-
+        print('urlAPI___________>$urlAPI');
+       
         await Dio().get(urlAPI).then((value) => Navigator.pop(context));
-      
       }).catchError((value) {
-        print('################# ${value.toString()}');
+        print('Error________ ${value.toString()}');
       });
     } catch (e) {
       print('Error ---------------> ${e.toString()}');
