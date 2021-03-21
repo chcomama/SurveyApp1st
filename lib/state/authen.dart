@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:ui';
 
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +49,7 @@ class _AuthenState extends State<Authen> {
   }
 
   TextButton buildRegister() => TextButton(
-      onPressed: ()=> Navigator.pushNamed(context, '/register'),
+      onPressed: () => Navigator.pushNamed(context, '/register'),
       child: Text(
         'New Register',
       ));
@@ -59,16 +61,20 @@ class _AuthenState extends State<Authen> {
       child: RaisedButton(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         color: MyStyle().darkColor,
-        onPressed: () => Navigator.pushNamed(context, '/myService'),
-        //normaldialog
-        //  onPressed: () {
-        // print('user = $user , password =$password');
-        // if ((user?.isEmpty ?? true) || (password?.isEmpty ?? true)) {
-        //   normalDialog(context, 'Have Space ? Please Fill Every Blank');
-        // } else {
-        //   checkAuthen();
-        // }
-        // },
+        // onPressed: () => Navigator.pushNamed(context, '/myService'),
+        // normaldialog
+        onPressed: () {
+          print('******___user = $user , password =$password');
+          if ((user?.isEmpty ?? true) && (password?.isEmpty ?? true)) {
+            normalDialog(context, 'Have Space ? Please Fill Every Blank');
+          } else if (user?.isEmpty ?? true) {
+            normalDialog(context, 'กรอก Username ก่อนจ้า');
+          } else if (password?.isEmpty ?? true) {
+            normalDialog(context, 'กรอก Password ก่อนจ้า');
+          } else {
+            checkAuthen();
+          }
+        },
         child: Text(
           'Login',
           style: MyStyle().whiteStyle(),
@@ -83,7 +89,8 @@ class _AuthenState extends State<Authen> {
           color: Colors.white60, borderRadius: BorderRadius.circular(15)),
       margin: EdgeInsets.only(top: 16),
       width: screen * 0.6,
-      child: TextField(  onChanged: (value) {
+      child: TextField(
+        onChanged: (value) {
           print('value = $value');
           user = value.trim();
           print('user = $user');
@@ -113,6 +120,11 @@ class _AuthenState extends State<Authen> {
       margin: EdgeInsets.only(top: 16),
       width: screen * 0.6,
       child: TextField(
+        onChanged: (value) {
+          print('value = $value');
+          password = value.trim();
+          print('password = $password');
+        },
         obscureText: status,
         decoration: InputDecoration(
           suffixIcon: IconButton(
@@ -165,32 +177,49 @@ class _AuthenState extends State<Authen> {
       child: Image.asset('images/logo.png'),
     );
   }
-    //async ใส่รหว่าง()กับ{}
+
+  //async ใส่รหว่าง()กับ{}
   Future<Null> checkAuthen() async {
     await Firebase.initializeApp().then((value) async {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: user, password: password)
-          .then(
-        (value) async {
-          String uid = value.user.uid;
+       await FirebaseAuth.instance.authStateChanges().listen((event) async {
+       
+        String urlAPI =
+            'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/CheckUser.php?isAdd=true&uid=$user&password=$password';
+        print('url___________***>$urlAPI');
 
-          print('uid = $uid');
-          //snapshots=อ่านจากฐานข้อมูล
-     
-          // await FirebaseFirestore.instance
-          //     .collection('typeuser')
-          //     .doc(uid)
-          //     .snapshots()
-          //     .listen((event) {
-          //   String typeUser = event.data()['typeuser'];
-          //   print('##################   typeUser = $typeUser');
+        await Dio().get(urlAPI).then(
+          (value) {
+            // print('****  value = $value');
+            //แปลงโค้ดให้เป็น utf8
+            var result = json.decode(value.data);
+            print('#####  result = $result');
 
-          //   Navigator.pushNamedAndRemoveUntil(
-          //       context, '/myService$typeUser', (route) => false);
-          // });
-        },
-      ).catchError((value) {
-        normalDialog(context, value.message);
+            if(result != null){
+
+                   Navigator.pushNamedAndRemoveUntil(
+                  context, '/myService', (route) => false);
+
+            }else{
+                normalDialog(context, 'Username Or Password ผิด เช็คอีกทีจ้า');
+            }
+
+            //snapshots=อ่านจากฐานข้อมูล
+
+            // await FirebaseFirestore.instance
+            //     .collection('typeuser')
+            //     .doc(uid)
+            //     .snapshots()
+            //     .listen((event) {
+            //   String typeUser = event.data()['typeuser'];
+            //   print('##################   typeUser = $typeUser');
+
+            //   Navigator.pushNamedAndRemoveUntil(
+            //       context, '/myService$typeUser', (route) => false);
+            // });
+          },
+        ).catchError((value) {
+          normalDialog(context, value.message);
+        });
       });
     });
   }
