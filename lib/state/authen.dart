@@ -1,11 +1,13 @@
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:dio/dio.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:survey_project/model/user_model.dart';
+import 'package:survey_project/state/customerList.dart';
+import 'package:survey_project/state/my_survice.dart';
 import 'package:survey_project/utility/dialog.dart';
+import 'package:survey_project/utility/my_constant.dart';
 import 'package:survey_project/utility/my_style.dart';
 
 class Authen extends StatefulWidget {
@@ -21,7 +23,7 @@ class _AuthenState extends State<Authen> {
   Widget build(BuildContext context) {
     screen = MediaQuery.of(context).size.width;
     return Scaffold(
-      floatingActionButton: buildRegister(),
+      // floatingActionButton: buildRegister(),
       body: Container(
         //BoxDecoration(color: MyStyle().lightColor)  สีล้วน
         decoration: BoxDecoration(
@@ -58,9 +60,13 @@ class _AuthenState extends State<Authen> {
     return Container(
       margin: EdgeInsets.only(top: 16),
       width: screen * 0.6,
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        color: MyStyle().darkColor,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: MyStyle().darkColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
         // onPressed: () => Navigator.pushNamed(context, '/myService'),
         // normaldialog
         onPressed: () {
@@ -180,47 +186,42 @@ class _AuthenState extends State<Authen> {
 
   //async ใส่รหว่าง()กับ{}
   Future<Null> checkAuthen() async {
-    await Firebase.initializeApp().then((value) async {
-       await FirebaseAuth.instance.authStateChanges().listen((event) async {
-       
-        String urlAPI =
-            'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/CheckUser.php?isAdd=true&uid=$user&password=$password';
-        print('url___________***>$urlAPI');
+    String urlAPI =
+        'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/CheckUser.php?isAdd=true&uid=$user&password=$password';
+    print('url___________***>$urlAPI');
+    try {
+      Response response = await Dio().get(urlAPI);
+      print('******res***** = $response');
 
-        await Dio().get(urlAPI).then(
-          (value) {
-            // print('****  value = $value');
-            //แปลงโค้ดให้เป็น utf8
-            var result = json.decode(value.data);
-            print('#####  result = $result');
+      var result = json.decode(response.data);
 
-            if(result != null){
+      if (result == 0) {
+        normalDialog(context, 'Password ไม่ถูกต้อง ลองใหม่จ้า ');
+      } else if (result == 1) {
+        normalDialog(context, 'Username ไม่ถูกต้อง ลองใหม่จ้า ');
+      } else {
+        for (var map in result) {
+          UserModel userModel = UserModel.fromJson(map);
+          String chk_user = userModel.userName;
 
-                   Navigator.pushNamedAndRemoveUntil(
-                  context, '/myService', (route) => false);
+        //  print('user--> $user  chk_user---> $chk_user');
+          if (user == chk_user) {
+            routeToService(MyService(), userModel);
+          }
+        }
+      }
+    } catch (e) {}
+  }
 
-            }else{
-                normalDialog(context, 'Username Or Password ผิด เช็คอีกทีจ้า');
-            }
+  Future<Null> routeToService(Widget myWidget, UserModel userModel) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setString(MyConstant().keyUsername, userModel.userName);
+    preferences.setString(MyConstant().keyRouteNo, userModel.routeNo);
+    preferences.setString(MyConstant().keyName, userModel.sName);
 
-            //snapshots=อ่านจากฐานข้อมูล
-
-            // await FirebaseFirestore.instance
-            //     .collection('typeuser')
-            //     .doc(uid)
-            //     .snapshots()
-            //     .listen((event) {
-            //   String typeUser = event.data()['typeuser'];
-            //   print('##################   typeUser = $typeUser');
-
-            //   Navigator.pushNamedAndRemoveUntil(
-            //       context, '/myService$typeUser', (route) => false);
-            // });
-          },
-        ).catchError((value) {
-          normalDialog(context, value.message);
-        });
-      });
-    });
+    MaterialPageRoute route = MaterialPageRoute(
+      builder: (context) => myWidget,
+    );
+    Navigator.pushAndRemoveUntil(context, route, (route) => false);
   }
 }

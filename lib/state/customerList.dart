@@ -5,7 +5,9 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_project/model/customer_model.dart';
+import 'package:survey_project/model/user_model.dart';
 import 'package:survey_project/state/addcustomer.dart';
 import 'package:survey_project/state/customerDetail.dart';
 import 'package:survey_project/state/my_survice.dart';
@@ -24,53 +26,52 @@ class CustomerList extends StatefulWidget {
 class _CustomerListState extends State<CustomerList> {
 //  CustomerModel customerModel;
   List<CustomerModel> customermodel = []; //ori
-  // List<Widget> customermodel = List();
+  String userName, routeNo, nameLogin;
   double screen;
   Widget currentWidget;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+   
     readAllProduct();
     // customerModel = widget.customerModel;
   }
+
 
   Future<Null> readAllProduct() async {
     if (customermodel.length != 0) {
       customermodel.clear();
     }
-
+   
     //หาUid
-    await Firebase.initializeApp().then((value) async {
-      await FirebaseAuth.instance.authStateChanges().listen((event) async {
-        // String uid = event.uid;
-        String uid = 'a12345';
-        print('*******  Read All Product work uid => $uid');
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    userName = preferences.getString(MyConstant().keyUsername);
+    
 
-        String urlAPI =
-            'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/getProductWhereUi.php?isAdd=true&uid=$uid';
-         print('url___________***>$urlAPI');
+    String uid = userName;
+    print('*******  Read All Product work uid => $uid');
 
-        await Dio().get(urlAPI).then((value) {
-          // print('****  value = $value');
-          //แปลงโค้ดให้เป็น utf8
-          var result = json.decode(value.data);
-          print('#####  result = $result');
+    String urlAPI =
+        'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/getProductWhereUi.php?isAdd=true&uid=$uid';
+    print('url___________***>$urlAPI');
 
-          //เอาค่าออกมาโชว์
-          for (var item in result) {
-            CustomerModel model = CustomerModel.fromMap(item);
-            setState(() {
-              customermodel.add(model);
-              // print('loppppp');
-            });
-          }
+    await Dio().get(urlAPI).then((value) {
+      // print('****  value = $value');
+      //แปลงโค้ดให้เป็น utf8
+      var result = json.decode(value.data);
+      print('#####  result = $result');
+
+      //เอาค่าออกมาโชว์
+      for (var item in result) {
+        CustomerModel model = CustomerModel.fromMap(item);
+        setState(() {
+          customermodel.add(model);
+          // print('loppppp');
         });
-      });
+      }
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +133,6 @@ class _CustomerListState extends State<CustomerList> {
                                 ),
                                 Text(
                                   'โทร : ${customermodel[index].tel1},${customermodel[index].tel2}',
-                                
                                 ),
                                 Text(
                                   'Map : ${customermodel[index].lat},${customermodel[index].long}',
@@ -150,7 +150,7 @@ class _CustomerListState extends State<CustomerList> {
                           customerModel: customermodel[index],
                         ),
                       );
-                        Navigator.push(context, route);
+                      Navigator.push(context, route);
                     },
                   );
                 },

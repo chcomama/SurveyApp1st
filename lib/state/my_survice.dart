@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_project/state/customerList.dart';
 import 'package:survey_project/state/reportSurvey.dart';
 import 'package:survey_project/utility/my_style.dart';
@@ -11,23 +12,22 @@ class MyService extends StatefulWidget {
 }
 
 class _MyServiceState extends State<MyService> {
-  String nameLogin, typeUser;
+  String nameLogin, userName, routeNo;
   Widget currentWidget = CustomerList();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    findNameLoginAndTypeUser();
+    findUser();
   }
 
 //หาชื่อที่Login
-  Future<Null> findNameLoginAndTypeUser() async {
-    await Firebase.initializeApp().then((value) async {
-      await FirebaseAuth.instance.authStateChanges().listen((event) {
-        setState(() {
-          nameLogin = event.displayName;
-        });
-      });
+  Future<Null> findUser() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      userName = preferences.getString('UserName');
+      routeNo = preferences.getString('RouteNo');
+      nameLogin = preferences.getString('Name');
     });
   }
 
@@ -36,7 +36,7 @@ class _MyServiceState extends State<MyService> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: MyStyle().primaryColor,
-        title: Text('Survey App'),
+        title: Text('User : $userName'),
       ),
       drawer: Drawer(
         child: Stack(
@@ -92,8 +92,8 @@ class _MyServiceState extends State<MyService> {
             image: AssetImage('images/wall.png'), fit: BoxFit.cover),
       ),
       currentAccountPicture: Image.asset('images/logo.png'),
-      accountName: Text(nameLogin == null ? 'Name ' : nameLogin),
-      accountEmail: Text('TypeUser :'),
+      accountName: Text(userName == null ? 'Name ' : userName),
+      // accountEmail: Text('TypeUser :'),
     );
   }
 

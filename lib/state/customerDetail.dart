@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:survey_project/model/customer_model.dart';
 import 'package:survey_project/state/Survey.dart';
+import 'package:survey_project/state/editCustomer.dart';
 import 'package:survey_project/utility/my_constant.dart';
 import 'package:survey_project/utility/my_style.dart';
 
@@ -30,6 +31,19 @@ class _Customer_DetailState extends State<Customer_Detail> {
       appBar: AppBar(
         title: Text('ร้าน :  ${customerModel.sh_name}'),
         backgroundColor: MyStyle().primaryColor,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              print(
+                  '*********name = $name  ');
+                MaterialPageRoute route = MaterialPageRoute(
+                        builder: (context) =>editCustomer(),
+                );
+                Navigator.push(context, route);
+            },
+          )
+        ],
       ),
       body: Stack(
         children: [
@@ -193,16 +207,10 @@ class _Customer_DetailState extends State<Customer_Detail> {
           ),
         ),
         onPressed: () {
-          
           MaterialPageRoute route = MaterialPageRoute(
-            builder: (context) => survey_first(
-           
-            ),
+            builder: (context) => survey_first(),
           );
-            Navigator.push(context, route);
-
-
-
+          Navigator.push(context, route);
         },
         child: Text('สำรวจ'),
       ),

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_project/utility/dialog.dart';
 import 'package:survey_project/utility/my_constant.dart';
 import 'package:survey_project/utility/my_style.dart';
@@ -24,6 +25,10 @@ class _AddCustomerState extends State<AddCustomer> {
   bool statusProgress = false;
   String dropdownValue = '1';
   double lat, lng;
+  String nameLogin, userName, routeNo;
+  String _mySelection;
+  List<Map> _myJson = [{"id":0,"name":"<New>"},{"id":1,"name":"Test Practice"}];
+
 
   @override
   void initState() {
@@ -50,12 +55,16 @@ class _AddCustomerState extends State<AddCustomer> {
     }
   }
 
+ 
+//หาชื่อที่Login
   Future<Null> findUid() async {
-    await Firebase.initializeApp().then((value) async {
-      await FirebaseAuth.instance.authStateChanges().listen((event) {
-        // uid = event.uid;
-        uid = 'a12345';
-      });
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      userName = preferences.getString('UserName');
+      routeNo = preferences.getString('RouteNo');
+      nameLogin = preferences.getString('Name');
+
+      uid = userName;
     });
   }
 
@@ -206,6 +215,9 @@ class _AddCustomerState extends State<AddCustomer> {
           buildSingleChildScrollView(),
         ],
       ),
+          
+       
+      
     );
   }
 
@@ -229,7 +241,7 @@ class _AddCustomerState extends State<AddCustomer> {
     );
   }
 
-//TestDropdowm 
+//TestDropdowm
   DropdownButton<String> buildDropdownButton() {
     return DropdownButton<String>(
       value: dropdownValue,
@@ -407,7 +419,7 @@ class _AddCustomerState extends State<AddCustomer> {
         String urlAPI =
             'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/addData.php?isAdd=true&uidshop=$uid&sh_code=$sh_code&name=$name&tel1=$tel1&tel2=$tel2&city=$city&custStatus=$custStatus&urlproduct=$urlPath&lat=$lat&lng=$lng';
         print('urlAPI___________>$urlAPI');
-       
+
         await Dio().get(urlAPI).then((value) => Navigator.pop(context));
       }).catchError((value) {
         print('Error________ ${value.toString()}');
