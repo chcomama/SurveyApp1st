@@ -1,5 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_project/state/customerList.dart';
@@ -16,7 +15,7 @@ class _MyServiceState extends State<MyService> {
   Widget currentWidget = CustomerList();
   @override
   void initState() {
-    // TODO: implement initState
+    
     super.initState();
     findUser();
   }
@@ -93,7 +92,7 @@ class _MyServiceState extends State<MyService> {
       ),
       currentAccountPicture: Image.asset('images/logo.png'),
       accountName: Text(userName == null ? 'Name ' : userName),
-      // accountEmail: Text('TypeUser :'),
+      accountEmail: Text(''),
     );
   }
 

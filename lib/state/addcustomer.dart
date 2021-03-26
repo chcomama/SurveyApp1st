@@ -1,9 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:http/http.dart' as http;
 
 import 'package:dio/dio.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -26,15 +26,28 @@ class _AddCustomerState extends State<AddCustomer> {
   String dropdownValue = '1';
   double lat, lng;
   String nameLogin, userName, routeNo;
-  String _mySelection;
-  List<Map> _myJson = [{"id":0,"name":"<New>"},{"id":1,"name":"Test Practice"}];
-
+  List dropdownStatus = [];
+  String dropdownid;
 
   @override
   void initState() {
     super.initState();
     findUid();
     findLatLng();
+    this.dropdownDD();
+  }
+
+  Future<String> dropdownDD() async {
+    var res = await http.get(
+      Uri.encodeFull(
+          'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/Dropdown.php?isAdd=true'),
+    ); //if you have any auth key place here...properly..
+    var resBody = json.decode(res.body);
+    setState(() {
+      dropdownStatus = resBody;
+    });
+
+    return "Sucess";
   }
 
   Future<Null> findLatLng() async {
@@ -55,7 +68,6 @@ class _AddCustomerState extends State<AddCustomer> {
     }
   }
 
- 
 //หาชื่อที่Login
   Future<Null> findUid() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -65,6 +77,7 @@ class _AddCustomerState extends State<AddCustomer> {
       nameLogin = preferences.getString('Name');
 
       uid = userName;
+      print('SESSION--->U_ $userName R_ $routeNo N_ $nameLogin');
     });
   }
 
@@ -102,6 +115,7 @@ class _AddCustomerState extends State<AddCustomer> {
       width: screen * 0.8,
       child: TextField(
         keyboardType: TextInputType.number,
+        maxLength: 10,
         onChanged: (value) => tel1 = value.trim(),
         decoration: InputDecoration(
           hintStyle: TextStyle(color: MyStyle().darkColor),
@@ -129,6 +143,7 @@ class _AddCustomerState extends State<AddCustomer> {
       width: screen * 0.8,
       child: TextField(
         keyboardType: TextInputType.number,
+        maxLength: 10,
         onChanged: (value) => tel2 = value.trim(),
         decoration: InputDecoration(
           hintStyle: TextStyle(color: MyStyle().darkColor),
@@ -180,22 +195,37 @@ class _AddCustomerState extends State<AddCustomer> {
           color: Colors.white60, borderRadius: BorderRadius.circular(15)),
       margin: EdgeInsets.only(top: 16),
       width: screen * 0.8,
-      child: TextField(
-        onChanged: (value) => custStatus = value.trim(),
-        decoration: InputDecoration(
-          hintStyle: TextStyle(color: MyStyle().darkColor),
-          prefixIcon: Icon(
-            Icons.category_sharp,
-            color: MyStyle().darkColor,
-          ),
-          hintText: 'สถานะ',
-          enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(color: MyStyle().darkColor)),
-          focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(color: MyStyle().lightColor)),
+      child: DropdownButton(
+        style: TextStyle(
+          color: MyStyle().darkColor,
+          fontSize: 20.0,
         ),
+        icon: Icon(Icons.arrow_drop_down),
+        hint: Text(
+          'สถานะ :',
+          style: TextStyle(color: MyStyle().darkColor),
+        ),
+        items: dropdownStatus.map((item) {
+          return new DropdownMenuItem(
+              child: new Text(
+                item['MenuName'], //Names that the api dropdown contains
+                style: TextStyle(
+                  fontSize: 17.0,
+                ),
+              ),
+              value: item['MenuName']
+                  .toString() //Id that has to be passed that the dropdown has.....
+              //e.g   India (Name)    and   its   ID (55fgf5f6frf56f) somethimg like that....
+              );
+        }).toList(),
+        onChanged: (String newVal) {
+          setState(() {
+            dropdownid = newVal;
+            print(dropdownid.toString());
+          });
+        },
+        value:
+            dropdownid, //pasing the default id that has to be viewed... //i havnt used something ... //you can place some (id)
       ),
     );
   }
@@ -215,9 +245,6 @@ class _AddCustomerState extends State<AddCustomer> {
           buildSingleChildScrollView(),
         ],
       ),
-          
-       
-      
     );
   }
 
@@ -234,6 +261,7 @@ class _AddCustomerState extends State<AddCustomer> {
           buildCity(),
           buildCustomerStatus(),
           // buildDropdownButton(),
+          // buildDropdownStatus(),
           lat == null ? MyStyle().showProgress() : showMap(),
           buildSaveCustomer(),
         ],
@@ -241,22 +269,31 @@ class _AddCustomerState extends State<AddCustomer> {
     );
   }
 
-//TestDropdowm
-  DropdownButton<String> buildDropdownButton() {
-    return DropdownButton<String>(
-      value: dropdownValue,
-      onChanged: (String newValue) {
-        setState(() {
-          dropdownValue = newValue;
-        });
-      },
-      items: <String>['1', '2', '3', '4']
-          .map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
+  DropdownButtonHideUnderline buildDropdownStatus() {
+    return DropdownButtonHideUnderline(
+      child: DropdownButton(
+        items: dropdownStatus.map((item) {
+          return new DropdownMenuItem(
+              child: new Text(
+                item['MenuName'], //Names that the api dropdown contains
+                style: TextStyle(
+                  fontSize: 17.0,
+                ),
+              ),
+              value: item['MenuName']
+                  .toString() //Id that has to be passed that the dropdown has.....
+              //e.g   India (Name)    and   its   ID (55fgf5f6frf56f) somethimg like that....
+              );
+        }).toList(),
+        onChanged: (String newVal) {
+          setState(() {
+            dropdownid = newVal;
+            print(dropdownid.toString());
+          });
+        },
+        value:
+            dropdownid, //pasing the default id that has to be viewed... //i havnt used something ... //you can place some (id)
+      ),
     );
   }
 
@@ -281,7 +318,15 @@ class _AddCustomerState extends State<AddCustomer> {
               (city?.isEmpty ?? true)) {
             normalDialog(context, 'Have Space ? Please Fill Every Blank');
           } else {
-            confirmSave();
+            // confirmSave();
+
+            //methodsave
+            uploadImageAndInsertData();
+            // Navigator.pop(context);
+            //refrehก่อน
+            setState(() {
+              statusProgress = true;
+            });
           }
           print('******************** name = $name  tel = $tel2  city = $city');
         },
@@ -383,6 +428,7 @@ class _AddCustomerState extends State<AddCustomer> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        // Text('*'),
         IconButton(
           icon: Icon(Icons.add_a_photo),
           onPressed: () => chooseSourceImage(ImageSource.camera),
@@ -417,7 +463,7 @@ class _AddCustomerState extends State<AddCustomer> {
         print('************ ${MyConstant().domain}$urlPath');
 
         String urlAPI =
-            'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/addData.php?isAdd=true&uidshop=$uid&sh_code=$sh_code&name=$name&tel1=$tel1&tel2=$tel2&city=$city&custStatus=$custStatus&urlproduct=$urlPath&lat=$lat&lng=$lng';
+            'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/addData.php?isAdd=true&uidshop=$uid&routeNo=$routeNo&name=$name&tel1=$tel1&tel2=$tel2&city=$city&custStatus=$dropdownid&urlproduct=$urlPath&lat=$lat&lng=$lng';
         print('urlAPI___________>$urlAPI');
 
         await Dio().get(urlAPI).then((value) => Navigator.pop(context));

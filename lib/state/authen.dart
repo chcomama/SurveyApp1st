@@ -147,7 +147,7 @@ class _AuthenState extends State<Authen> {
               setState(() {
                 status = !status;
               });
-              print('You click red eye **************** status = $status');
+              //print('You click red eye **************** status = $status');
             },
           ),
           hintStyle: TextStyle(color: MyStyle().darkColor),
