@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:survey_project/model/customer_model.dart';
-import 'package:survey_project/state/Survey.dart';
+import 'package:survey_project/state/survey.dart';
 import 'package:survey_project/state/editCustomer.dart';
 import 'package:survey_project/utility/my_constant.dart';
 import 'package:survey_project/utility/my_style.dart';

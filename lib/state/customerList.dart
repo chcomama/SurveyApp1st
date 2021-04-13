@@ -2,16 +2,11 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_project/model/customer_model.dart';
 import 'package:survey_project/model/user_model.dart';
-import 'package:survey_project/state/addcustomer.dart';
 import 'package:survey_project/state/customerDetail.dart';
-import 'package:survey_project/state/my_survice.dart';
-
 import 'package:survey_project/utility/my_constant.dart';
 import 'package:survey_project/utility/my_style.dart';
 
@@ -26,42 +21,45 @@ class CustomerList extends StatefulWidget {
 class _CustomerListState extends State<CustomerList> {
 //  CustomerModel customerModel;
   List<CustomerModel> customermodel = []; //ori
-  String userName, routeNo, nameLogin;
+  String userName, routeNo, nameLogin, userPak, userLevel;
   double screen;
   Widget currentWidget;
+  var numrow;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-   
     readAllProduct();
     // customerModel = widget.customerModel;
   }
-
 
   Future<Null> readAllProduct() async {
     if (customermodel.length != 0) {
       customermodel.clear();
     }
-   
+
     //หาUid
     SharedPreferences preferences = await SharedPreferences.getInstance();
     userName = preferences.getString(MyConstant().keyUsername);
-    
+    routeNo = preferences.getString('RouteNo');
+    nameLogin = preferences.getString('Name');
+    userPak = preferences.getString('Pak');
+    userLevel = preferences.getString('Level');
 
     String uid = userName;
     print('*******  Read All Product work uid => $uid');
 
     String urlAPI =
-        'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/getProductWhereUi.php?isAdd=true&uid=$uid';
+        'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/CustomerAll.php?isAdd=true&uid=$uid&RouteNo=$routeNo&Pak=$userPak&Level=$userLevel';
     print('url___________***>$urlAPI');
 
     await Dio().get(urlAPI).then((value) {
-      // print('****  value = $value');
+      //print('****  value = $value');
       //แปลงโค้ดให้เป็น utf8
       var result = json.decode(value.data);
-      print('#####  result = $result');
 
+      print('#####  result = $result');
+      numrow = result;
       //เอาค่าออกมาโชว์
       for (var item in result) {
         CustomerModel model = CustomerModel.fromMap(item);
@@ -85,9 +83,10 @@ class _CustomerListState extends State<CustomerList> {
               .then((value) => readAllProduct()),
           child: Icon(Icons.add),
         ),
-        body: customermodel.length == 0
-            ? MyStyle().showProgress()
-            : ListView.builder(
+
+        body:  numrow == null? Text(''): customermodel.length == 0?
+         MyStyle().showProgress() : 
+             ListView.builder(
                 itemCount: customermodel.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(

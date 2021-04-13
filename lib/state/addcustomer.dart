@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:dio/dio.dart';
@@ -25,9 +26,10 @@ class _AddCustomerState extends State<AddCustomer> {
   bool statusProgress = false;
   String dropdownValue = '1';
   double lat, lng;
-  String nameLogin, userName, routeNo;
-  List dropdownStatus = [];
-  String dropdownid;
+  String nameLogin, userName, routeNo, userPak, userLevel;
+  List dropdownStatus = [], dropdownCity = [];
+
+  String dropdownid, dropdownCityid;
 
   @override
   void initState() {
@@ -35,19 +37,7 @@ class _AddCustomerState extends State<AddCustomer> {
     findUid();
     findLatLng();
     this.dropdownDD();
-  }
-
-  Future<String> dropdownDD() async {
-    var res = await http.get(
-      Uri.encodeFull(
-          'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/Dropdown.php?isAdd=true'),
-    ); //if you have any auth key place here...properly..
-    var resBody = json.decode(res.body);
-    setState(() {
-      dropdownStatus = resBody;
-    });
-
-    return "Sucess";
+    this.dropdownbyCity();
   }
 
   Future<Null> findLatLng() async {
@@ -75,10 +65,45 @@ class _AddCustomerState extends State<AddCustomer> {
       userName = preferences.getString('UserName');
       routeNo = preferences.getString('RouteNo');
       nameLogin = preferences.getString('Name');
-
+      userPak = preferences.getString('Pak');
+      userLevel = preferences.getString('Level');
       uid = userName;
-      print('SESSION--->U_ $userName R_ $routeNo N_ $nameLogin');
+      print(
+          'SESSION--->U_ $userName R_ $routeNo N_ $nameLogin P_ $userPak L_ $userLevel');
     });
+  }
+
+  Future<String> dropdownDD() async {
+    var res = await http.get(
+      Uri.encodeFull(
+          'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/Dropdown.php?isAdd=true&TypeDropdown=Status'),
+    ); //if you have any auth key place here...properly..
+    var resBody = json.decode(res.body);
+    setState(() {
+      dropdownStatus = resBody;
+    });
+    return "Sucess";
+  }
+
+  Future<String> dropdownbyCity() async {
+    //หาUid
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    userPak = preferences.getString('Pak');
+    String urlDD =
+        'https://smicb.osotspa.com/smicprogram/QAS/SurveyApp/Dropdown.php?isAdd=true&TypeDropdown=City&Pak=$userPak';
+    print('URL--DD--->$urlDD');
+
+    var res = await http.get(
+      Uri.encodeFull(urlDD),
+    ); //if you have any auth key place here...properly..
+
+    var resBody = json.decode(res.body);
+    print('resBody----------------> $resBody');
+    setState(() {
+      dropdownCity = resBody;
+    });
+
+    return "Sucess";
   }
 
   Container buildCustName() {
@@ -109,8 +134,9 @@ class _AddCustomerState extends State<AddCustomer> {
 
   Container buildTel() {
     return Container(
-      decoration: BoxDecoration(
-          color: Colors.white60, borderRadius: BorderRadius.circular(15)),
+      decoration: 
+      BoxDecoration(
+          ),
       margin: EdgeInsets.only(top: 16),
       width: screen * 0.8,
       child: TextField(
@@ -120,16 +146,18 @@ class _AddCustomerState extends State<AddCustomer> {
         decoration: InputDecoration(
           hintStyle: TextStyle(color: MyStyle().darkColor),
           prefixIcon: Icon(
-            Icons.phone_android_sharp,
+            Icons.phone_android,
             color: MyStyle().darkColor,
           ),
-          hintText: 'เบอร์ติดต่อ',
+          hintText: 'เบอร์มือถือ',
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(color: MyStyle().darkColor)),
+              // borderSide: BorderSide(color:  Colors.blueGrey[100])
+              ),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(color: MyStyle().lightColor)),
+              // borderSide: BorderSide(color:  Colors.blueGrey[100])
+              ),
         ),
       ),
     );
@@ -138,26 +166,31 @@ class _AddCustomerState extends State<AddCustomer> {
   Container buildTel2() {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white70, borderRadius: BorderRadius.circular(15)),
+         color: Colors.white70, borderRadius: BorderRadius.circular(15)
+          ),
       margin: EdgeInsets.only(top: 16),
-      width: screen * 0.8,
+      width: screen * 0.8,  
       child: TextField(
         keyboardType: TextInputType.number,
         maxLength: 10,
         onChanged: (value) => tel2 = value.trim(),
         decoration: InputDecoration(
+        
           hintStyle: TextStyle(color: MyStyle().darkColor),
           prefixIcon: Icon(
-            Icons.phone_android,
-            color: MyStyle().darkColor,
+            Icons.phone,
+            color: MyStyle().darkColor
           ),
-          hintText: 'เบอร์ติดต่อ2',
+         
+          hintText: 'เบอร์มือถือ2',
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(color: MyStyle().darkColor)),
+               borderSide: BorderSide(color: Colors.blueGrey[100])
+              ),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(color: MyStyle().lightColor)),
+              borderSide: BorderSide(color:  Colors.blueGrey[100])
+              ),
         ),
       ),
     );
@@ -169,22 +202,36 @@ class _AddCustomerState extends State<AddCustomer> {
           color: Colors.white60, borderRadius: BorderRadius.circular(15)),
       margin: EdgeInsets.only(top: 16),
       width: screen * 0.8,
-      child: TextField(
-        onChanged: (value) => city = value.trim(),
-        decoration: InputDecoration(
-          hintStyle: TextStyle(color: MyStyle().darkColor),
-          prefixIcon: Icon(
-            Icons.location_city,
-            color: MyStyle().darkColor,
-          ),
-          hintText: 'จังหวัด',
-          enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(color: MyStyle().darkColor)),
-          focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(color: MyStyle().lightColor)),
+      child: DropdownButton(
+        style: TextStyle(
+          color: MyStyle().darkColor,
+          fontSize: 18.0,
         ),
+        icon: Icon(Icons.arrow_drop_down),
+        hint: Text(
+          'จังหวัด :',
+          style: TextStyle(color: MyStyle().darkColor),
+        ),
+        items: dropdownCity.map((item) {
+          return new DropdownMenuItem(
+              child: new Text(
+                item['SH_City'], //Names that the api dropdown contains
+                style: TextStyle(
+                  fontSize: 17.0,
+                ),
+              ),
+              value: item['SH_City']
+                  .toString() 
+              );
+        }).toList(),
+        onChanged: (String newVal) {
+          setState(() {
+            dropdownCityid = newVal;
+            print(dropdownCityid.toString());
+          });
+        },
+        value:
+            dropdownCityid, //pasing the default id that has to be viewed... //i havnt used something ... //you can place some (id)
       ),
     );
   }
@@ -192,30 +239,33 @@ class _AddCustomerState extends State<AddCustomer> {
   Container buildCustomerStatus() {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white60, borderRadius: BorderRadius.circular(15)),
+        color: Colors.white60,
+        borderRadius: BorderRadius.circular(15),
+        // border: Border.all(color: MyStyle().darkColor),
+      ),
       margin: EdgeInsets.only(top: 16),
       width: screen * 0.8,
       child: DropdownButton(
         style: TextStyle(
           color: MyStyle().darkColor,
-          fontSize: 20.0,
+          fontSize: 18.0,
         ),
         icon: Icon(Icons.arrow_drop_down),
         hint: Text(
           'สถานะ :',
           style: TextStyle(color: MyStyle().darkColor),
         ),
+
         items: dropdownStatus.map((item) {
           return new DropdownMenuItem(
               child: new Text(
-                item['MenuName'], //Names that the api dropdown contains
+                item['MenuName'], 
                 style: TextStyle(
                   fontSize: 17.0,
                 ),
               ),
               value: item['MenuName']
-                  .toString() //Id that has to be passed that the dropdown has.....
-              //e.g   India (Name)    and   its   ID (55fgf5f6frf56f) somethimg like that....
+                  .toString() 
               );
         }).toList(),
         onChanged: (String newVal) {
@@ -225,7 +275,7 @@ class _AddCustomerState extends State<AddCustomer> {
           });
         },
         value:
-            dropdownid, //pasing the default id that has to be viewed... //i havnt used something ... //you can place some (id)
+            dropdownid, 
       ),
     );
   }
@@ -262,7 +312,7 @@ class _AddCustomerState extends State<AddCustomer> {
           buildCustomerStatus(),
           // buildDropdownButton(),
           // buildDropdownStatus(),
-          lat == null ? MyStyle().showProgress() : showMap(),
+          // lat == null ? MyStyle().showProgress() : showMap(),
           buildSaveCustomer(),
         ],
       ),
@@ -353,8 +403,8 @@ class _AddCustomerState extends State<AddCustomer> {
     );
     return Container(
       margin: EdgeInsets.only(top: 16),
-      height: 200,
-      width: 300,
+      height: 150,
+      width: 200,
       child: GoogleMap(
         initialCameraPosition: cameraPosition,
         mapType: MapType.normal,

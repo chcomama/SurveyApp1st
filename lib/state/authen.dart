@@ -218,6 +218,9 @@ class _AuthenState extends State<Authen> {
     preferences.setString(MyConstant().keyUsername, userModel.userName);
     preferences.setString(MyConstant().keyRouteNo, userModel.routeNo);
     preferences.setString(MyConstant().keyName, userModel.sName);
+    preferences.setString(MyConstant().keyLevel, userModel.level);
+    preferences.setString(MyConstant().keyPak, userModel.pak);
+
 
     MaterialPageRoute route = MaterialPageRoute(
       builder: (context) => myWidget,
